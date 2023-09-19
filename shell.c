@@ -44,12 +44,23 @@ int loopShell()
     {
         printf("hacker@ltsp234:~/home/$ ");
         char *command = read_command_naive();
-
         printf("The command you entered: %s \n", command);
+        
 
-        int s;
-        s = system(command);
-        printf("%d", s);
+        if(fork() != 0) {
+            wait();
+        }
+        
+        else 
+        {
+            //int s;
+            //s = system(command);
+            int s = execve(command);
+            //printf("%d", s);
+            //exit(0);
+        }
+
+       
     }
 
     return 0;
