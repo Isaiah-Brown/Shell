@@ -7,7 +7,8 @@ and it doesn't look for EOF (although I don't fully know how to fix that problem
 #include <stdio.h>
 #include <stdlib.h>
 
-char *read_command_naive(void){
+char *read_command_naive(void)
+{
 	int bufsize = 4;
 	char *buffer = malloc(sizeof(char) * bufsize);
 	int pos = 0;
@@ -17,12 +18,15 @@ char *read_command_naive(void){
 	lesson_buffer[0] = '5';
 	// I don't assign this variable anywhere else
 
-	while(1){
+	while (1)
+	{
 		char c = getchar();
-		if(c !='\n'){
+		if (c != '\n')
+		{
 			buffer[pos++] = c;
 		}
-		else {
+		else
+		{
 			buffer[pos] = '\0'; // null byte
 
 			// Confirm that these two things are both correct
@@ -36,7 +40,8 @@ char *read_command_naive(void){
 	}
 }
 
-int main(){
+int main()
+{
 
 	// If you try some really long input it should crash:
 	// This is a really very long and verbose testing string.
