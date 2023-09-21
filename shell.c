@@ -1,19 +1,28 @@
-/* A really simple shell facsimilie program! */
+/* Isaiah's turtle shell */
 
+#define _GNU_SOURCE 1 // for get_current_dir_name();
 #include <stdio.h>
 #include <stdlib.h>
-#include "command.h"
+#include <unistd.h>
+#include <string.h>
 
-char *read_command_naive(void)
+#define CHANGE_DIRECTORY "cd"
+#define UNKOWN_COMMAND "\nlearn how to enter a linux command correctly, moron\n     (moron means 'stupid person' per GOOGLE) \n\n\n                  you are stupid\n" // YOU ARE STUPID!!!
+#define UNKOWN_DIRECTORY "\nthat directory doesn't exist\nare you imaging things again?\n\n\nlike your girlfriend?\n"                                                  // YOU HAVE NO GIRLFREIND!!!
+#define CHOO "CHOO"                                                                                                                                                    // FOR CHOO CHOO
+
+void TRAIN() // FOR TRAIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 {
-    int bufsize = 4;
-    char *buffer = malloc(sizeof(char) * bufsize);
-    int pos = 0;
+    system("sl -F");
+    system("sl -l");
+    system("sl -a");
+}
 
-    // Exemplifies the problem
-    // char *lesson_buffer = malloc(sizeof(char) * 1);
-    // lesson_buffer[0] = '5';
-    // I don't assign this variable anywhere else
+char *read_command(void) // to read user input into one string
+{
+    int bufsize = 16;
+    char *buffer = malloc(sizeof(char) * bufsize); // make space for string
+    int pos = 0;
 
     while (1)
     {
@@ -25,47 +34,87 @@ char *read_command_naive(void)
         else
         {
             buffer[pos] = '\0'; // null byte
-
-            // Confirm that these two things are both correct
-            printf("buffer: %s\n", buffer);
-            // printf("lesson: %s\n", lesson_buffer);
-            // free(lesson_buffer);
-
-            // Return the collected string
             return buffer;
+        }
+
+        if (pos >= bufsize) // increase memory space for string
+        {
+            bufsize *= 2;
+            buffer = (char *)realloc(buffer, sizeof(char) * bufsize);
         }
     }
 }
 
-int loopShell()
+char **get_parameters(char *command) // to make a pointer to a pointer to the parameters of the command
 {
+    int buffsize = 4;
+    char **parameters = malloc(buffsize * sizeof(char *)); // make space for array of pointers
+    char *parameter = strtok(command, " ");
+    int pos = 0;
 
-    while (1)
+    while (parameter != NULL) // loops to get all parameters
     {
-        printf("hacker@ltsp234:~/home/$ ");
-        char *command = read_command_naive();
-        printf("The command you entered: %s \n", command);
+        parameters[pos] = parameter;
+        parameter = strtok(NULL, " "); // splits on " "
+        pos++;
 
-        if (fork() != 0)
+        if (pos >= buffsize) // increase memory space
         {
-            wait();
-        }
-
-        else
-        {
-            // int s;
-            // s = system(command);
-            int s = execve(command);
-            // printf("%d", s);
-            // exit(0);
+            buffsize *= 2;
+            parameters = (char *)realloc(parameters, buffsize * sizeof(char *));
         }
     }
+    return parameters;
+}
 
+int run_shell() // running the actuall shell
+{
+    while (1)
+    {
+        char *cwd = get_current_dir_name(); // get the current directory so we can concatinate it to our hard-coded computer name
+        printf("novak@shittycomputer:~%s ", cwd);
+        char *command = read_command();              // get the command user entered
+        char **parameters = get_parameters(command); // parse the commands so we can use execvp to run it
+
+        if (!strcmp(parameters[0], CHANGE_DIRECTORY)) // check if command is 'cd' if it is it changes the directory while still in the parent
+        {
+            int x = chdir(parameters[1]);
+            if (x != 0)
+            {
+                printf("%s", UNKOWN_DIRECTORY); // print error message
+            }
+        }
+        else
+        {
+            if (fork() != 0) // clone the code
+            {
+                wait(); // wait for child to die
+            }
+            else // child
+            {
+                if ((strcmp(parameters[0], CHOO) == 0)) // FOR TRAIN!!!!
+                {
+                    TRAIN();
+                }
+                else
+                {
+                    int x = execvp(parameters[0], parameters); // execute the command
+                    if (x != 0)
+                    {
+                        printf(UNKOWN_COMMAND); // error message
+                    }
+                }
+            }
+        }
+    }
     return 0;
 }
 
 int main(int argc, char *argv[])
 {
-    loopShell();
+    printf("\n        Welcome to Isaiah's     \n\n"); // String to introduce the shell
+    printf("_________---TURTLE SHELL---________\n\n\n");
+    printf("Enter command <CHOO CHOO> for a surprise\n\n");
+    run_shell(); // to run the shell
     return 0;
 }
