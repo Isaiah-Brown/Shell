@@ -123,6 +123,9 @@ int run_shell()
 
 int main(int argc, char *argv[])
 {
+    printf("\n        Welcome to Isaiah's     \n\n");
+    printf("_________---TURTLE SHELL---________\n\n\n");
+    printf("Enter command <CHOO CHOO> for a surprise\n\n");
     run_shell();
     return 0;
 }
