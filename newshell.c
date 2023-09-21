@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <string.h>
 
+#define CHANGE_DIRECTORY "cd"
+
 char *read_command_naive(void)
 {
     int bufsize = 16;
@@ -65,29 +67,49 @@ int loopShell()
         printf("novak@shittycomputer:~%s ", cwd);
         char *command = read_command_naive();
         printf("The command you entered: %s \n", command);
-        
 
-        if(fork() != 0) {
-            wait();
+        char **parameters = get_parameters(command);
+        int pos = 0;
+        while (parameters[pos] != NULL) 
+        {
+            printf("%s\n", parameters[pos]);
+            pos++;
+        }
+        printf("got parameters\n");
+        printf("%s\n", parameters[0]);
+
+        char* cd = "cd";
+
+        printf("This is the string comparissoin:   %d\n", strcmp(parameters[0], cd) );
+
+        if(!strcmp(parameters[0], CHANGE_DIRECTORY))
+        {
+            printf("Must change directorys!\n");
+            chdir(parameters[1]);
         }
         
         else 
         {
-            char **parameters = get_parameters(command);
-            int pos = 0;
-            while (parameters[pos] != NULL) 
+            if(fork() != 0) 
             {
-                printf("%s\n", parameters[pos]);
-                pos++;
+            wait();
             }
-            printf("got parameters\n");
+        
+            else 
+            {
+            int x = execvp(parameters[0], parameters);
+            printf("%d", x);
+            
             //int s;
             //s = system(command);
             //int s = execve(command);
             //printf("%d", s);
             //exit(0);
+            }
+
         }
 
+        
        
     }
 
