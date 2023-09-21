@@ -37,6 +37,12 @@ char *read_command_naive(void)
     }
 }
 
+char **get_parameters(char *command)
+{
+    char **parameters =
+        for (int i = 0; i <)
+}
+
 int loopShell()
 {
 
@@ -44,21 +50,17 @@ int loopShell()
     {
         printf("hacker@ltsp234:~/home/$ ");
         char *command = read_command_naive();
+
+        char **parameters = malloc(sizeof(char) * 4 * 4);
+        int pos = 0;
+
+        while (command[pos] != '\0')
+        {
+
+            pos++;
+        }
+
         printf("The command you entered: %s \n", command);
-
-        if (fork() != 0)
-        {
-            wait();
-        }
-
-        else
-        {
-            // int s;
-            // s = system(command);
-            int s = execve(command);
-            // printf("%d", s);
-            // exit(0);
-        }
     }
 
     return 0;
