@@ -7,22 +7,14 @@
 #include <string.h>
 
 #define CHANGE_DIRECTORY "cd"
+#define EXIT "exit"
+#define ENTER 
 #define UNKOWN_COMMAND "\nlearn how to enter a linux command correctly, moron\n     (moron means 'stupid person' per GOOGLE) \n\n\n                  you are stupid\n" // YOU ARE STUPID!!!
 #define UNKOWN_DIRECTORY "\nthat directory doesn't exist\nare you imaging things again?\n\n\nlike your girlfriend?\n"                                                  // YOU HAVE NO GIRLFREIND!!!
 #define CHOO "CHOO"                                                                                                                                                    // FOR CHOO CHOO
 
 void TRAIN() // FOR TRAIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 {
-    // char** one = {"sl", "sl"};
-    // int x = execvp(one[0], one);
-    // printf("%d", x);
-
-    /*
-    int x = execvp("sl", "sl -l");
-    printf("%d", x);
-    int x = execvp("sl", "sl -a");
-    printf("%d", x);
-    */
     system("sl -F");
     system("sl -l");
     system("sl -a");
@@ -74,6 +66,7 @@ char **get_parameters(char *command) // to make a pointer to a pointer to the pa
             parameters = (char *)realloc(parameters, buffsize * sizeof(char *));
         }
     }
+    free(parameter); //to free
     return parameters;
 }
 
@@ -86,6 +79,14 @@ int run_shell() // running the actuall shell
         char *command = read_command();              // get the command user entered
         char **parameters = get_parameters(command); // parse the commands so we can use execvp to run it
 
+        if (!strcmp(parameters[0], EXIT)) // check if command is 'exit' if it is
+        {
+            free(command); //to free
+            free(parameters); //to free
+            free(cwd);
+            exit(0);
+        }
+        
         if (!strcmp(parameters[0], CHANGE_DIRECTORY)) // check if command is 'cd' if it is it changes the directory while still in the parent
         {
             int x = chdir(parameters[1]);
@@ -116,6 +117,9 @@ int run_shell() // running the actuall shell
                 }
             }
         }
+        free(cwd);
+        free(command); //to free
+        free(parameters); // to free
     }
     return 0;
 }
