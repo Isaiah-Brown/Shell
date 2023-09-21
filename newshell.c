@@ -1,4 +1,4 @@
-/* A really simple shell facsimilie program! */
+/* Isaiah's turtle shell */
 
 #define _GNU_SOURCE 1
 #include <stdio.h>
@@ -7,12 +7,15 @@
 #include <string.h>
 
 #define CHANGE_DIRECTORY "cd"
+#define UNKOWN_COMMAND "\nlearn how to enter a linux command correctly, moron\n     (moron means 'stupid person' per GOOGLE) \n\n\n                  you are stupid\n"
+#define UNKOWN_DIRECTORY "\nthat directory doesn't exist\nare you imaging things again?\n\n\nlike your girlfriend?\n"
 
-char *read_command_naive(void)
+char *read_command(void)
 {
     int bufsize = 16;
     char *buffer = malloc(sizeof(char) * bufsize);
     int pos = 0;
+
     while (1)
     {
         char c = getchar();
@@ -23,9 +26,9 @@ char *read_command_naive(void)
         else
         {
             buffer[pos] = '\0'; // null byte
-            printf("buffer: %s\n", buffer);
             return buffer;
         }
+
         if (pos >= bufsize)
         {
             bufsize *= 2;
@@ -38,7 +41,6 @@ char **get_parameters(char* command)
 {
     int buffsize = 4;
     char **parameters = malloc(buffsize * sizeof(char*));
-    
     char *parameter = strtok(command, " ");
     int pos = 0;
 
@@ -54,71 +56,54 @@ char **get_parameters(char* command)
             parameters = (char *) realloc(parameters, buffsize * sizeof(char*));
         }
     }
-
     return parameters;
 }
 
-int loopShell()
+int run_shell()
 {
-
     while (1)
     {
         char* cwd = get_current_dir_name();
         printf("novak@shittycomputer:~%s ", cwd);
-        char *command = read_command_naive();
-        printf("The command you entered: %s \n", command);
-
+        char *command = read_command();
         char **parameters = get_parameters(command);
         int pos = 0;
-        while (parameters[pos] != NULL) 
-        {
-            printf("%s\n", parameters[pos]);
-            pos++;
-        }
-        printf("got parameters\n");
-        printf("%s\n", parameters[0]);
-
-        char* cd = "cd";
-
-        printf("This is the string comparissoin:   %d\n", strcmp(parameters[0], cd) );
 
         if(!strcmp(parameters[0], CHANGE_DIRECTORY))
         {
-            printf("Must change directorys!\n");
-            chdir(parameters[1]);
+            int x = chdir(parameters[1]);
+            if (x != 0) 
+            {
+                printf("%s", UNKOWN_DIRECTORY);
+            }
         }
         
         else 
         {
             if(fork() != 0) 
             {
-            wait();
+                wait();
             }
-        
             else 
             {
-            int x = execvp(parameters[0], parameters);
-            printf("%d", x);
-            
-            //int s;
-            //s = system(command);
-            //int s = execve(command);
-            //printf("%d", s);
-            //exit(0);
+                int x = execvp(parameters[0], parameters);
+                if (x = 0) 
+                {
+                    printf("%d", x);
+                }
+                else 
+                {
+                    printf(UNKOWN_COMMAND);
+                }
             }
-
         }
-
-        
-       
     }
-
     return 0;
 }
 
 int main(int argc, char *argv[])
 {
-    loopShell();
+    run_shell();
     return 0;
 }
 
