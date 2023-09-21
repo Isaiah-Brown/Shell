@@ -9,6 +9,25 @@
 #define CHANGE_DIRECTORY "cd"
 #define UNKOWN_COMMAND "\nlearn how to enter a linux command correctly, moron\n     (moron means 'stupid person' per GOOGLE) \n\n\n                  you are stupid\n"
 #define UNKOWN_DIRECTORY "\nthat directory doesn't exist\nare you imaging things again?\n\n\nlike your girlfriend?\n"
+#define CHOO "CHOO"
+
+void TRAIN()
+{
+    //char** one = {"sl", "sl"};
+    //int x = execvp(one[0], one);
+    //printf("%d", x);
+
+
+    /*
+    int x = execvp("sl", "sl -l");
+    printf("%d", x);
+    int x = execvp("sl", "sl -a");
+    printf("%d", x);
+    */
+   system("sl -F");
+   system("sl -l");
+   system("sl -a");
+}
 
 char *read_command(void)
 {
@@ -67,8 +86,7 @@ int run_shell()
         printf("novak@shittycomputer:~%s ", cwd);
         char *command = read_command();
         char **parameters = get_parameters(command);
-        int pos = 0;
-
+  
         if(!strcmp(parameters[0], CHANGE_DIRECTORY))
         {
             int x = chdir(parameters[1]);
@@ -77,7 +95,6 @@ int run_shell()
                 printf("%s", UNKOWN_DIRECTORY);
             }
         }
-        
         else 
         {
             if(fork() != 0) 
@@ -86,14 +103,17 @@ int run_shell()
             }
             else 
             {
-                int x = execvp(parameters[0], parameters);
-                if (x = 0) 
+                if((strcmp(parameters[0], CHOO) == 0))
                 {
-                    printf("%d", x);
+                    TRAIN();  
                 }
-                else 
+                else
                 {
-                    printf(UNKOWN_COMMAND);
+                    int x = execvp(parameters[0], parameters);
+                    if (x != 0) 
+                    {
+                        printf(UNKOWN_COMMAND);
+                    }
                 }
             }
         }
