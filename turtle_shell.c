@@ -8,7 +8,7 @@
 
 #define CHANGE_DIRECTORY "cd"
 #define EXIT "exit"
-#define ENTER 
+#define ENTER  '\0'
 #define UNKOWN_COMMAND "\nlearn how to enter a linux command correctly, moron\n     (moron means 'stupid person' per GOOGLE) \n\n\n                  you are stupid\n" // YOU ARE STUPID!!!
 #define UNKOWN_DIRECTORY "\nthat directory doesn't exist\nare you imaging things again?\n\n\nlike your girlfriend?\n"                                                  // YOU HAVE NO GIRLFREIND!!!
 #define CHOO "CHOO"                                                                                                                                                    // FOR CHOO CHOO
@@ -77,49 +77,52 @@ int run_shell() // running the actuall shell
         char *cwd = get_current_dir_name(); // get the current directory so we can concatinate it to our hard-coded computer name
         printf("novak@shittycomputer:~%s ", cwd);
         char *command = read_command();              // get the command user entered
-        char **parameters = get_parameters(command); // parse the commands so we can use execvp to run it
 
-        if (!strcmp(parameters[0], EXIT)) // check if command is 'exit' if it is
+        if (command[0] != ENTER) //User pressed enter key
         {
-            free(command); //to free
-            free(parameters); //to free
-            free(cwd);
-            exit(0);
-        }
-        
-        if (!strcmp(parameters[0], CHANGE_DIRECTORY)) // check if command is 'cd' if it is it changes the directory while still in the parent
-        {
-            int x = chdir(parameters[1]);
-            if (x != 0)
+            char **parameters = get_parameters(command); // parse the commands so we can use execvp to run it
+            if (!strcmp(parameters[0], EXIT)) // check if command is 'exit' if it is it ends the program
             {
-                printf("%s", UNKOWN_DIRECTORY); // print error message
+                free(command); //to free
+                free(parameters); //to free
+                free(cwd);
+                exit(0);
             }
-        }
-        else
-        {
-            if (fork() != 0) // clone the code
+
+            if (!strcmp(parameters[0], CHANGE_DIRECTORY)) // check if command is 'cd' if it is it changes the directory while still in the parent
             {
-                wait(); // wait for child to die
-            }
-            else // child
-            {
-                if ((strcmp(parameters[0], CHOO) == 0)) // FOR TRAIN!!!!
+                int x = chdir(parameters[1]);
+                if (x != 0)
                 {
-                    TRAIN();
+                    printf("%s", UNKOWN_DIRECTORY); // print error message
                 }
-                else
+            }
+            else
+            {
+                if (fork() != 0) // clone the code
                 {
-                    int x = execvp(parameters[0], parameters); // execute the command
-                    if (x != 0)
+                    wait(); // wait for child to die
+                }
+                else // child
+                {
+                    if ((strcmp(parameters[0], CHOO) == 0)) // FOR TRAIN!!!!
                     {
-                        printf(UNKOWN_COMMAND); // error message
+                        TRAIN();
+                    }
+                    else
+                    {
+                        int x = execvp(parameters[0], parameters); // execute the command
+                        if (x != 0)
+                        {   
+                            printf(UNKOWN_COMMAND); // error message
+                        }
                     }
                 }
             }
+            free(parameters); // to free
         }
-        free(cwd);
+        free(cwd); // to free
         free(command); //to free
-        free(parameters); // to free
     }
     return 0;
 }
