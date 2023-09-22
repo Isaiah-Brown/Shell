@@ -18,6 +18,7 @@ void TRAIN() // FOR TRAIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     system("sl -F");
     system("sl -l");
     system("sl -a");
+    exit(0);
 }
 
 char *read_command(void) // to read user input into one string
@@ -115,6 +116,7 @@ int run_shell() // running the actuall shell
                         if (x != 0)
                         {   
                             printf(UNKOWN_COMMAND); // error message
+                            exit(0);
                         }
                     }
                 }
